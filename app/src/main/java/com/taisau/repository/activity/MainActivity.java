@@ -67,31 +67,6 @@ public class MainActivity extends AppCompatActivity implements Camera.ErrorCallb
     }
 
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        LogUtils.i("___lhl___", "MainActivity   onResume()");
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        LogUtils.i("___lhl___", "MainActivity   onPause()");
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        LogUtils.i("___lhl___", "MainActivity   onStop()");
-    }
-
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        LogUtils.i("___lhl___", "MainActivity   onDestroy()");
-    }
-
     //Camera.ErrorCallback
     @Override
     public void onError(int error, Camera camera) {
@@ -162,5 +137,30 @@ public class MainActivity extends AppCompatActivity implements Camera.ErrorCallb
                 }
             }
         }, 5000);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        LogUtils.i("___lhl___", "MainActivity   onResume()");
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        LogUtils.i("___lhl___", "MainActivity   onPause()");
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        LogUtils.i("___lhl___", "MainActivity   onStop()");
+    }
+
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        LogUtils.i("___lhl___", "MainActivity   onDestroy()");
     }
 }

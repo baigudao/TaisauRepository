@@ -12,8 +12,8 @@ public class MainModel implements MainContract.Model, Camera.PreviewCallback {
 
     private MainContract.Presenter presenter;
 
-    public MainModel(/*Context context,*/ MainContract.Presenter presenter2) {
-        this.presenter = presenter2;
+    public MainModel(/*Context context,*/ MainContract.Presenter presenter) {
+        this.presenter = presenter;
 //        this.mContext = context;
 //        initSoundPool();
     }

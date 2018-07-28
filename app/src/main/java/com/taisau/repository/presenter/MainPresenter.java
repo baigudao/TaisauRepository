@@ -14,7 +14,6 @@ public class MainPresenter implements MainContract.Model, MainContract.Presenter
     private MainContract.Model model;
 //    private Context mContext;
 
-
     public MainPresenter(/*Context context,*/ MainContract.View view) {
         this.view = view;
 //        this.mContext = context;
@@ -23,6 +22,6 @@ public class MainPresenter implements MainContract.Model, MainContract.Presenter
 
     @Override
     public Camera.PreviewCallback getPreviewCallback() {
-        return  model.getPreviewCallback();
+        return model.getPreviewCallback();
     }
 }
