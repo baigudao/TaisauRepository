@@ -8,16 +8,14 @@ import com.taisau.repository.model.MainModel;
 /**
  * Created by Devin on 2018\7\27 0027.
  */
-public class MainPresenter implements MainContract.Model, MainContract.Presenter {
+public class MainPresenter implements MainContract.Presenter {
 
     private MainContract.View view;
     private MainContract.Model model;
-//    private Context mContext;
 
-    public MainPresenter(/*Context context,*/ MainContract.View view) {
+    public MainPresenter(MainContract.View view) {
         this.view = view;
-//        this.mContext = context;
-        model = new MainModel(/*mContext,*/this);
+        model = new MainModel(this);
     }
 
     @Override

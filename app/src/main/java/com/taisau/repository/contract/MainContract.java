@@ -16,6 +16,6 @@ public interface MainContract {
     }
 
     interface Presenter {
-
+        Camera.PreviewCallback getPreviewCallback();
     }
 }

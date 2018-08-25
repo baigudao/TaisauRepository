@@ -24,6 +24,7 @@ public class CameraUtils2 {
     }
 
     private static Camera camera;
+
     //摄像头参数
     private int cameraFrontIndex = -1;
     private int cameraBackIndex = -1;
@@ -39,8 +40,18 @@ public class CameraUtils2 {
         initCamera();
     }
 
+    public static void setStatus(FAIL_STATUS s) {
+        status = s;
+    }
+
+    public static FAIL_STATUS getStatus() {
+        return status;
+    }
+
+    //初始化相机
     private void initCamera() {
         FAIL_STATUS s = FAIL_STATUS.NORMAL;
+        //设置前置或后置摄像头
         setCameraIndex();
         if (s == FAIL_STATUS.NORMAL)
             startCamera();
@@ -86,12 +97,97 @@ public class CameraUtils2 {
         }, 5000);
     }
 
-    public static void setStatus(FAIL_STATUS s) {
-        status = s;
+    /**
+     * 用于获取手机摄像头信息
+     * 判断手机是否有摄像头
+     * cameraFrontIndex为前摄像头
+     * cameraBackIndex为后置摄像头
+     * 默认打开前置摄像头,如果没有则为后置
+     */
+    private void setCameraIndex() {
+        if (Camera.getNumberOfCameras() > 0)
+            for (int i = 0; i < Camera.getNumberOfCameras(); i++) {
+                Camera.CameraInfo info = new Camera.CameraInfo();
+                Camera.getCameraInfo(i, info);
+                if (info.facing == Camera.CameraInfo.CAMERA_FACING_FRONT) {
+                    cameraFrontIndex = i;
+                }
+                if (info.facing == Camera.CameraInfo.CAMERA_FACING_BACK) {
+                    cameraBackIndex = i;
+                }
+                if (cameraFrontIndex != -1)
+                    cameraIndex = cameraFrontIndex;
+                else if (cameraBackIndex != -1)
+                    cameraIndex = cameraBackIndex;
+            }
+        else {
+            status = FAIL_STATUS.NO_NUMBER_OF_CAMERA;
+        }
     }
 
-    public static FAIL_STATUS getStatus() {
-        return status;
+
+    //开始摄像
+    private int startCamera() {
+        //打开摄像头
+        try {
+            camera = Camera.open(cameraIndex);
+            if (camera != null) {
+                //设置旋转90度
+                camera.setDisplayOrientation(90);
+                //设置旋转180度
+                // camera.setDisplayOrientation(180);
+                // 通过SurfaceView显示取景画面
+                int size = checkSupportPreviewSize();
+//                LogUtils.e("size为 " + size, support720, support1080);
+                Camera.Parameters parameters = camera.getParameters();
+                if (support720) {
+                    parameters.setPreviewSize(1280, 720);
+                } else if (support1080) {
+                    parameters.setPreviewSize(1920, 1080);
+                } else {
+                    status = FAIL_STATUS.NO_SUPPORT_PREVIEW_SIZE;
+                    return -1;
+                }
+
+//                parameters.setSceneMode(Camera.Parameters.SCENE_MODE_HDR);
+//                parameters.setWhiteBalance(Camera.Parameters.WHITE_BALANCE_WARM_FLUORESCENT);
+//                parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_AUTO);
+//                parameters.setExposureCompensation();
+//                System.out.println("facedetect support:" + camera.getParameters().getMaxNumDetectedFaces());
+//                System.out.println("iso:" + parameters.get("iso-values") + " now：" + parameters.get("iso"));
+//                parameters.set("iso", "ISO3200");
+//                System.out.println("support type:" + supportType);
+
+                camera.setParameters(parameters);
+                // 开始预览
+                // 自动对焦
+            } else
+                status = FAIL_STATUS.NOT_FIND_CAMERA;
+        } catch (Exception e) {
+            e.printStackTrace();
+            status = FAIL_STATUS.NOT_FIND_CAMERA;
+            return -2;
+        }
+        return 0;
+    }
+
+    /**
+     * @return -1:尚未生成系统camera
+     * 0:设置尺寸成功
+     */
+    private int checkSupportPreviewSize() {
+        if (camera != null) {
+            Camera.Parameters parameters = camera.getParameters();
+            List<Camera.Size> sizes = parameters.getSupportedPreviewSizes();
+            for (Camera.Size size : sizes) {
+                if (!support720 && size.width == 1280 && size.height == 720)
+                    support720 = true;
+                if (!support1080 && size.width == 1920 && size.height == 1080)
+                    support1080 = true;
+            }
+            return 0;
+        } else
+            return -1;
     }
 
     /**
@@ -108,7 +204,6 @@ public class CameraUtils2 {
      *
      * @return
      */
-
     public Camera getCamera() {
         return camera;
     }
@@ -139,96 +234,6 @@ public class CameraUtils2 {
             return true;
         } else
             return false;
-    }
-
-    /**
-     * @return -1尚未生成系统camera
-     * 1设置尺寸成功
-     */
-    private int checkSupportPreviewSize() {
-        if (camera != null) {
-            Camera.Parameters parameters = camera.getParameters();
-            List<Camera.Size> sizes = parameters.getSupportedPreviewSizes();
-            for (Camera.Size size : sizes) {
-                if (!support720 && size.width == 1280 && size.height == 720)
-                    support720 = true;
-                if (!support1080 && size.width == 1920 && size.height == 1080)
-                    support1080 = true;
-            }
-            return 0;
-        } else
-            return -1;
-    }
-
-
-    /**
-     * 用于获取手机摄像头信息
-     * 判断手机是否有摄像头
-     * cameraFrontIndex为前摄像头
-     * cameraBackIndex为后置摄像头
-     * 默认打开前置摄像头,如果没有则为后置
-     */
-    private void setCameraIndex() {
-        if (Camera.getNumberOfCameras() > 0)
-            for (int i = 0; i < Camera.getNumberOfCameras(); i++) {
-                Camera.CameraInfo info = new Camera.CameraInfo();
-                Camera.getCameraInfo(i, info);
-                if (info.facing == Camera.CameraInfo.CAMERA_FACING_FRONT) {
-                    cameraFrontIndex = i;
-                }
-                if (info.facing == Camera.CameraInfo.CAMERA_FACING_BACK) {
-                    cameraBackIndex = i;
-                }
-                if (cameraFrontIndex != -1)
-                    cameraIndex = cameraFrontIndex;
-                else if (cameraBackIndex != -1)
-                    cameraIndex = cameraBackIndex;
-            }
-        else {
-            status = FAIL_STATUS.NO_NUMBER_OF_CAMERA;
-        }
-    }
-
-
-    // 初始化Camera
-    private int startCamera() {
-        //打开摄像头
-        try {
-            camera = Camera.open(cameraIndex);
-            if (camera != null) {
-                //   camera.setDisplayOrientation(90);
-                //设置旋转90度
-                // camera.setDisplayOrientation(180);
-                // 通过SurfaceView显示取景画面
-                checkSupportPreviewSize();
-                Camera.Parameters parameters = camera.getParameters();
-                if (support720) {
-                    parameters.setPreviewSize(1280, 720);
-                } else if (support1080) {
-                    parameters.setPreviewSize(1920, 1080);
-                } else {
-                    status = FAIL_STATUS.NO_SUPPORT_PREVIEW_SIZE;
-                    return -1;
-                }
-                    /*    parameters.setSceneMode(Camera.Parameters.SCENE_MODE_HDR);
-                        parameters.setWhiteBalance(Camera.Parameters.WHITE_BALANCE_WARM_FLUORESCENT);
-                        parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_AUTO);*/
-                //parameters.setExposureCompensation();
-                       /* System.out.println("facedetect support:"+camera.getParameters().getMaxNumDetectedFaces());
-                        System.out.println("iso:"+parameters.get("iso-values")+" now："+parameters.get("iso"));
-                        // parameters.set("iso","ISO3200");
-                        System.out.println("support type:"+supportType);*/
-                camera.setParameters(parameters);
-                // 开始预览
-                // 自动对焦
-            } else
-                status = FAIL_STATUS.NOT_FIND_CAMERA;
-        } catch (Exception e) {
-            e.printStackTrace();
-            status = FAIL_STATUS.NOT_FIND_CAMERA;
-            return -2;
-        }
-        return 0;
     }
 
     // 释放摄像头图像显示

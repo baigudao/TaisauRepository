@@ -9,6 +9,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 
 import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.ToastUtils;
@@ -19,7 +21,7 @@ import com.taisau.repository.util.CameraUtils2;
 
 import java.io.IOException;
 
-public class MainActivity extends AppCompatActivity implements Camera.ErrorCallback, MainContract.View {
+public class MainActivity extends AppCompatActivity implements MainContract.View, Camera.ErrorCallback, SurfaceHolder.Callback {
 
     private MainPresenter presenter;
 
@@ -36,11 +38,16 @@ public class MainActivity extends AppCompatActivity implements Camera.ErrorCallb
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        //取消标题
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        //取消状态栏
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_main);
+        surfaceView = findViewById(R.id.main_camera_preview);
+//        LogUtils.e("___lhl___", "w:" + surfaceView.getWidth() + " h:" + surfaceView.getHeight());
 
         //初始化Presenter
         presenter = new MainPresenter(this);
-        surfaceView = findViewById(R.id.main_camera_preview);
         LogUtils.i("___lhl___", "MainActivity   onCreate()");
     }
 
@@ -49,6 +56,10 @@ public class MainActivity extends AppCompatActivity implements Camera.ErrorCallb
     protected void onStart() {
         super.onStart();
         LogUtils.i("___lhl___", "MainActivity   onStart()");
+        surfaceHolder = surfaceView.getHolder();
+        // 为surfaceHolder添加一个回调监听器，用于监听surfaceView的变化
+        surfaceHolder.addCallback(this);
+        surfaceView.setKeepScreenOn(true);
         if (cameraUtils == null) {
             cameraUtils = new CameraUtils2(this, this);
         }
@@ -58,7 +69,7 @@ public class MainActivity extends AppCompatActivity implements Camera.ErrorCallb
                 //绑定摄像头到surfaceView和Holder上
                 //  cameraUtils.getCamera().autoFocus(null);
                 cameraUtils.getCamera().setPreviewDisplay(surfaceHolder);
-                cameraUtils.getCamera().setPreviewCallback(/*MainActivity.this*/presenter.getPreviewCallback());
+                cameraUtils.getCamera().setPreviewCallback(presenter.getPreviewCallback());
                 cameraUtils.getCamera().startPreview();
             } catch (IOException e) {
                 e.printStackTrace();
@@ -162,5 +173,37 @@ public class MainActivity extends AppCompatActivity implements Camera.ErrorCallb
     protected void onDestroy() {
         super.onDestroy();
         LogUtils.i("___lhl___", "MainActivity   onDestroy()");
+    }
+
+    //surfaceView生成时会调用此函数
+    @Override
+    public void surfaceCreated(SurfaceHolder surfaceHolder) {
+        LogUtils.i("___lhl___", "MainActivity   surfaceCreated()");
+    }
+
+    @Override
+    public void surfaceChanged(SurfaceHolder surfaceHolder, int i, int i1, int i2) {
+        if (surfaceHolder.getSurface() == null) {
+            return;
+        }
+        if (cameraUtils.getCamera() != null) {
+            try {
+                cameraUtils.getCamera().stopPreview();
+                //绑定摄像头到surfaceView和Holder上
+                //  cameraUtils.getCamera().autoFocus(null);
+                cameraUtils.getCamera().setPreviewDisplay(surfaceHolder);
+                cameraUtils.getCamera().setPreviewCallback(presenter.getPreviewCallback());
+                cameraUtils.getCamera().startPreview();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        LogUtils.i("___lhl___", "MainActivity   surfaceChanged()");
+    }
+
+    //surfaceView销毁时会调用此函数此时释放摄像头
+    @Override
+    public void surfaceDestroyed(SurfaceHolder surfaceHolder) {
+        LogUtils.i("___lhl___", "MainActivity   surfaceDestroyed()");
     }
 }
