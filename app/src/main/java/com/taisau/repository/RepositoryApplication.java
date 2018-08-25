@@ -21,6 +21,7 @@ public class RepositoryApplication extends Application {
 
         arithmeticInit();
 
+        //初始化Utils
         Utils.init(this);
     }
 
