@@ -175,6 +175,7 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
         LogUtils.d("MainActivity   onDestroy()");
     }
 
+
     //surfaceView生成时会调用此函数
     @Override
     public void surfaceCreated(SurfaceHolder surfaceHolder) {
