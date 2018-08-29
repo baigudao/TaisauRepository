@@ -1,12 +1,9 @@
 package com.taisau.repository.model;
 
-import android.graphics.Bitmap;
 import android.hardware.Camera;
 
 import com.GFace;
-import com.blankj.utilcode.util.LogUtils;
 import com.taisau.repository.contract.MainContract;
-import com.taisau.repository.util.ImgUtils;
 import com.taisau.repository.util.YUVUtils;
 
 import java.util.List;
@@ -48,12 +45,10 @@ public class MainModel implements MainContract.Model, Camera.PreviewCallback {
     //摄像头数据返回
     @Override
     public void onPreviewFrame(byte[] data, Camera camera) {
-        LogUtils.i("___lhl___", "MainModel   onPreviewFrame()");
-//        LogUtils.e("data的长度为   >>>" + data.length);//1382400
+//        LogUtils.i("data的长度为   >>>" + data.length);//1382400
 
-        Bitmap bitmap = ImgUtils.getUtils().Bytes2Bitmap(data);
         //压缩yuv图片
-        temp = YUVUtils.scaleYUV300_200(data, 1280, 720);
+        temp = YUVUtils.scaleYUV300_200(data, camera.getParameters().getPreviewSize().width, camera.getParameters().getPreviewSize().height);
         ret = GFace.detectFace(temp, 300, 200);
         if (ret != null && ret[0] > 0) {
             aa = GFace.getFaceInfo(ret);
@@ -67,7 +62,7 @@ public class MainModel implements MainContract.Model, Camera.PreviewCallback {
 //            if (isSlow) {
 //                isSlow = false;
 //            }
-            LogUtils.e("___lhl___", "has face");
+//            LogUtils.d("has face");
         } else {
 ////                presenter.updateFaceFrame(changeSituation(0, 0, 0, 0), 640, 360);//step1
 //            if (noFaceCount < noFace * 10)
@@ -79,7 +74,7 @@ public class MainModel implements MainContract.Model, Camera.PreviewCallback {
 //                }
 //            }
 //            hasFace = false;
-            LogUtils.e("___lhl___", "no face");
+//            LogUtils.d("no face");
         }
     }
 }

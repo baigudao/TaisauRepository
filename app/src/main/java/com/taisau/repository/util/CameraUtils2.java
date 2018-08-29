@@ -138,7 +138,7 @@ public class CameraUtils2 {
                 // camera.setDisplayOrientation(180);
                 // 通过SurfaceView显示取景画面
                 int size = checkSupportPreviewSize();
-//                LogUtils.e("size为 " + size, support720, support1080);
+//                LogUtils.d("size为 " + size, support720, support1080);
                 Camera.Parameters parameters = camera.getParameters();
                 if (support720) {
                     parameters.setPreviewSize(1280, 720);

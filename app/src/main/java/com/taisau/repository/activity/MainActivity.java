@@ -43,19 +43,19 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
         //取消状态栏
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_main);
-        surfaceView = findViewById(R.id.main_camera_preview);
-//        LogUtils.e("___lhl___", "w:" + surfaceView.getWidth() + " h:" + surfaceView.getHeight());
+//        LogUtils.e("w:" + surfaceView.getWidth() + " h:" + surfaceView.getHeight());
 
         //初始化Presenter
         presenter = new MainPresenter(this);
-        LogUtils.i("___lhl___", "MainActivity   onCreate()");
+        LogUtils.d("MainActivity   onCreate()");
     }
 
 
     @Override
     protected void onStart() {
         super.onStart();
-        LogUtils.i("___lhl___", "MainActivity   onStart()");
+        LogUtils.d("MainActivity   onStart()");
+        surfaceView = findViewById(R.id.main_camera_preview);
         surfaceHolder = surfaceView.getHolder();
         // 为surfaceHolder添加一个回调监听器，用于监听surfaceView的变化
         surfaceHolder.addCallback(this);
@@ -81,7 +81,7 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
     //Camera.ErrorCallback
     @Override
     public void onError(int error, Camera camera) {
-        LogUtils.i("___lhl___", "MainActivity   onError()");
+        LogUtils.d("MainActivity   onError()");
         if (error == 100) {
             errorDialog = new AlertDialog.Builder(this).setTitle("摄像头失效")
                     .setMessage("请确认摄像头是否有效，或者重新插拔摄像头点击确定键重新初始化\n提示:5秒后会自动进行初始化工作")
@@ -153,32 +153,32 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
     @Override
     protected void onResume() {
         super.onResume();
-        LogUtils.i("___lhl___", "MainActivity   onResume()");
+        LogUtils.d("MainActivity   onResume()");
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        LogUtils.i("___lhl___", "MainActivity   onPause()");
+        LogUtils.d("MainActivity   onPause()");
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        LogUtils.i("___lhl___", "MainActivity   onStop()");
+        LogUtils.d("MainActivity   onStop()");
     }
 
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        LogUtils.i("___lhl___", "MainActivity   onDestroy()");
+        LogUtils.d("MainActivity   onDestroy()");
     }
 
     //surfaceView生成时会调用此函数
     @Override
     public void surfaceCreated(SurfaceHolder surfaceHolder) {
-        LogUtils.i("___lhl___", "MainActivity   surfaceCreated()");
+        LogUtils.d("MainActivity   surfaceCreated()");
     }
 
     @Override
@@ -198,12 +198,12 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
                 e.printStackTrace();
             }
         }
-        LogUtils.i("___lhl___", "MainActivity   surfaceChanged()");
+        LogUtils.d("MainActivity   surfaceChanged()");
     }
 
     //surfaceView销毁时会调用此函数此时释放摄像头
     @Override
     public void surfaceDestroyed(SurfaceHolder surfaceHolder) {
-        LogUtils.i("___lhl___", "MainActivity   surfaceDestroyed()");
+        LogUtils.d("MainActivity   surfaceDestroyed()");
     }
 }

@@ -21,7 +21,7 @@ import java.nio.ByteBuffer;
 
 public class ImgUtils {
 
-//    private static final String tempFile = LIB_DIR + "/temp_mod.png";
+    //    private static final String tempFile = LIB_DIR + "/temp_mod.png";
     private static ImgUtils utils = new ImgUtils();
 
     public static ImgUtils getUtils() {
